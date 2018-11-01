@@ -23,7 +23,7 @@ public class FeederRenderer extends TileEntitySpecialRenderer<FeederBlockEntity>
 
     public FeederRenderer() {
         try {
-            this.model = new ResetControlTabulaModel(TabulaModelHelper.loadTabulaModel("/assets/jurassicraft/models/block/feeder.tbl"));
+            this.model = new ResetControlTabulaModel(TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/block/feeder")));
             this.model.setResetEachFrame(false);
             this.texture = new ResourceLocation(JurassiCraft.MODID, "textures/blocks/feeder.png");
         } catch (Exception e) {

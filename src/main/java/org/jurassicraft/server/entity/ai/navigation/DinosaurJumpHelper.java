@@ -26,7 +26,7 @@ public class DinosaurJumpHelper extends EntityJumpHelper {
     public void jump(int height) {
         this.isJumping = true;
         this.jumped = true;
-        this.jumpHeight = Math.min(entity.getDinosaur().getJumpHeight(), height);
+        this.jumpHeight = Math.min(entity.getDinosaur().getMetadata().getJumpHeight(), height);
         this.yaw = this.entity.rotationYaw;
         this.speed = this.entity.getAIMoveSpeed();
         Animation animation = this.entity.getAnimation();

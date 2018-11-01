@@ -14,6 +14,6 @@ public class SyringeSlot extends Slot {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() instanceof SyringeItem && SyringeItem.getDinosaur(stack).getBirthType() == BirthType.EGG_LAYING;
+        return stack.getItem() instanceof SyringeItem && SyringeItem.getDinosaur(stack).getMetadata().getBirthType() == BirthType.EGG_LAYING;
     }
 }

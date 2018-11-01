@@ -44,7 +44,7 @@ public class DinosaurWalkNodeProcessor extends WalkNodeProcessor {
             stepHeight = MathHelper.floor(Math.max(1.0F, this.entity.stepHeight));
         }
 
-        int jumpHeight = this.dinosaur.getJumpHeight();
+        int jumpHeight = this.dinosaur.getMetadata().getJumpHeight();
         if (!this.entity.isInWater() && !this.entity.isInLava() && this.entity.onGround && jumpHeight > 0 && jumpHeight > stepHeight) {
             stepHeight = jumpHeight + 1;
         }

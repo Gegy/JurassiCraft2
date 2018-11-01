@@ -1,6 +1,5 @@
 package org.jurassicraft.server.entity.ai;
 
-import com.google.common.collect.Sets;
 import net.minecraft.entity.ai.EntityAITempt;
 import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.food.FoodHelper;
@@ -10,7 +9,7 @@ public class TemptNonAdultEntityAI extends EntityAITempt {
     private DinosaurEntity dinosaur;
 
     public TemptNonAdultEntityAI(DinosaurEntity dinosaur, double speed) {
-        super(dinosaur, speed, !dinosaur.getDinosaur().getDiet().canEat(dinosaur, FoodType.MEAT), FoodHelper.getEdibleFoodItems(dinosaur, dinosaur.getDinosaur().getDiet()));
+        super(dinosaur, speed, !dinosaur.getDinosaur().getMetadata().getDiet().canEat(dinosaur, FoodType.MEAT), FoodHelper.getEdibleFoodItems(dinosaur, dinosaur.getDinosaur().getMetadata().getDiet()));
         this.dinosaur = dinosaur;
         this.setMutexBits(Mutex.METABOLISM | Mutex.MOVEMENT);
     }

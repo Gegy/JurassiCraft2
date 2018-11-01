@@ -85,7 +85,7 @@ public class CultivateProcessGui extends GuiScreen {
         String name;
 
         if (dinosaur != null) {
-            name = dinosaur.getName();
+            name = dinosaur.getLocalizedName();
         } else {
             name = "Unknown";
         }

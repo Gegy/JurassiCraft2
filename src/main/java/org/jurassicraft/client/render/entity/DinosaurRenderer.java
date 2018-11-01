@@ -12,6 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jurassicraft.client.render.entity.dinosaur.DinosaurRenderInfo;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.entity.GrowthStage;
 
@@ -37,12 +38,13 @@ public class DinosaurRenderer extends RenderLiving<DinosaurEntity> {
 
     @Override
     public void preRenderCallback(DinosaurEntity entity, float partialTick) {
+        DinosaurMetadata metadata = this.dinosaur.getMetadata();
         float scaleModifier = entity.getAttributes().getScaleModifier();
-        float scale = (float) entity.interpolate(this.dinosaur.getScaleInfant(), this.dinosaur.getScaleAdult()) * scaleModifier;
+        float scale = (float) entity.interpolate(metadata.getScaleInfant(), metadata.getScaleAdult()) * scaleModifier;
 
         this.shadowSize = scale * this.renderInfo.getShadowSize();
 
-        GlStateManager.translate(this.dinosaur.getOffsetX() * scale, this.dinosaur.getOffsetY() * scale, this.dinosaur.getOffsetZ() * scale);
+        GlStateManager.translate(metadata.getOffsetX() * scale, metadata.getOffsetY() * scale, metadata.getOffsetZ() * scale);
 
         String name = entity.getCustomNameTag();
         

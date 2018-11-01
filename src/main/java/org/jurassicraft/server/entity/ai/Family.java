@@ -92,7 +92,7 @@ public class Family {
                 }
             }
         }
-        if (entity.getRNG().nextInt(50) == 0 && (entity.getDinosaur().shouldBreedAroundOffspring() || this.children.isEmpty())) {
+        if (entity.getRNG().nextInt(50) == 0 && (entity.getDinosaur().getMetadata().shouldBreedAroundOffspring() || this.children.isEmpty())) {
             DinosaurEntity father = null;
             DinosaurEntity mother = null;
             for (DinosaurEntity member : members) {

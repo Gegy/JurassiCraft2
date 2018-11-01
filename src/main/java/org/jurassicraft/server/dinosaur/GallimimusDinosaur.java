@@ -1,53 +1,45 @@
 package org.jurassicraft.server.dinosaur;
 
-import java.util.ArrayList;
-
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.BiomeDictionary;
+import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.server.entity.Diet;
 import org.jurassicraft.server.entity.dinosaur.GallimimusEntity;
 import org.jurassicraft.server.food.FoodType;
 import org.jurassicraft.server.period.TimePeriod;
 
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-
 public class GallimimusDinosaur extends Dinosaur {
-    public GallimimusDinosaur() {
-        super();
-
-        this.setName("Gallimimus");
-        this.setDinosaurClass(GallimimusEntity.class);
-        this.setDinosaurType(DinosaurType.SCARED);
-        this.setTimePeriod(TimePeriod.CRETACEOUS);
-        this.setEggColorMale(0xD5BA86, 0xD16918);
-        this.setEggColorFemale(0xCCBA94, 0xAB733D);
-        this.setHealth(5, 30);
-        this.setSpeed(0.2, 0.3);
-        this.setStrength(1, 5);
-        this.setMaximumAge(this.fromDays(35));
-        this.setEyeHeight(0.58F, 2.7F);
-        this.setSizeX(0.3F, 1.2F);
-        this.setSizeY(0.55F, 2.25F);
-        this.setStorage(27);
-        this.setDiet(Diet.HERBIVORE.get().withModule(new Diet.DietModule(FoodType.INSECT).withCondition(entity -> entity.getAgePercentage() < 25)));
-        this.setBones("skull", "tail_vertebrae", "shoulder", "ribcage", "pelvis", "neck_vertebrae", "leg_bones", "foot_bones", "arm_bones");
-        this.setHeadCubeName("Head Base");
-        this.setScale(0.85F, 0.2F);
-        this.setImprintable(true);
-        this.setFlee(true);
-        this.setFlockSpeed(1.4F);
-        this.setBreeding(false, 2, 6, 20, false, true);
-        this.setJumpHeight(3);
-        String[][] recipe =
-                {{"", "", "", "neck_vertebrae", "skull"},
-                {"tail_vertebrae", "pelvis", "ribcage","shoulder",""},
-                {"", "leg_bones", "leg_bones", "arm_bones", ""},
-                {"", "foot_bones", "foot_bones", "", ""}};
-        this.setRecipe(recipe);
-        
-        ArrayList<Biome> biomeList = new ArrayList<Biome>();
-        biomeList.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
-        biomeList.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.DRY));
-        
-        this.setSpawn(25, biomeList.toArray(new Biome[biomeList.size()]));
+    @Override
+    protected DinosaurMetadata buildMetadata() {
+        return new DinosaurMetadata(new ResourceLocation(JurassiCraft.MODID, "gallimimus"))
+                .setEntity(GallimimusEntity.class, GallimimusEntity::new)
+                .setDinosaurType(DinosaurType.SCARED)
+                .setTimePeriod(TimePeriod.CRETACEOUS)
+                .setEggColorMale(0xD5BA86, 0xD16918)
+                .setEggColorFemale(0xCCBA94, 0xAB733D)
+                .setHealth(5, 30)
+                .setSpeed(0.2, 0.3)
+                .setStrength(1, 5)
+                .setMaximumAge(this.fromDays(35))
+                .setEyeHeight(0.58F, 2.7F)
+                .setSizeX(0.3F, 1.2F)
+                .setSizeY(0.55F, 2.25F)
+                .setStorage(27)
+                .setDiet(Diet.HERBIVORE.get().withModule(new Diet.DietModule(FoodType.INSECT).withCondition(entity -> entity.getAgePercentage() < 25)))
+                .setBones("skull", "tail_vertebrae", "shoulder", "ribcage", "pelvis", "neck_vertebrae", "leg_bones", "foot_bones", "arm_bones")
+                .setHeadCubeName("Head Base")
+                .setScale(0.85F, 0.2F)
+                .setImprintable(true)
+                .setFlee(true)
+                .setFlockSpeed(1.4F)
+                .setBreeding(false, 2, 6, 20, false, true)
+                .setJumpHeight(3)
+                .setSpawn(25, BiomeDictionary.Type.PLAINS, BiomeDictionary.Type.DRY)
+                .setRecipe(new String[][] {
+                        { "", "", "", "neck_vertebrae", "skull" },
+                        { "tail_vertebrae", "pelvis", "ribcage", "shoulder", "" },
+                        { "", "leg_bones", "leg_bones", "arm_bones", "" },
+                        { "", "foot_bones", "foot_bones", "", "" } }
+                );
     }
 }

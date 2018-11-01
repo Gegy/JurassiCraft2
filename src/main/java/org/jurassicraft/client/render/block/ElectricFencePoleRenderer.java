@@ -22,7 +22,7 @@ public class ElectricFencePoleRenderer extends TileEntitySpecialRenderer<Electri
 
     public ElectricFencePoleRenderer() {
         try {
-            this.model = new TabulaModel(TabulaModelHelper.loadTabulaModel("/assets/jurassicraft/models/block/low_security_fence_pole_lights.tbl"));
+            this.model = new TabulaModel(TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/block/low_security_fence_pole_lights")));
             this.texture = new ResourceLocation(JurassiCraft.MODID, "textures/blocks/low_security_fence_pole.png");
         } catch (Exception e) {
             e.printStackTrace();

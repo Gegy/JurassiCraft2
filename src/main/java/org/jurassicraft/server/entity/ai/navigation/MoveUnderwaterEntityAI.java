@@ -76,6 +76,6 @@ public class MoveUnderwaterEntityAI extends EntityAIBase
 
     public MovementType getType()
     {
-        return swimmingEntity.getDinosaur().getMovementType();
+        return swimmingEntity.getDinosaur().getMetadata().getMovementType();
     }
 }

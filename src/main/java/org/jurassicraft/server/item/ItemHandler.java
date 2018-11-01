@@ -1,28 +1,7 @@
 package org.jurassicraft.server.item;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.jurassicraft.client.sound.SoundHandler;
-import org.jurassicraft.server.api.Hybrid;
-import org.jurassicraft.server.block.BlockHandler;
-import org.jurassicraft.server.block.tree.TreeType;
-import org.jurassicraft.server.conf.JurassiCraftConfig;
-import org.jurassicraft.server.dinosaur.Dinosaur;
-import org.jurassicraft.server.entity.DinosaurEntity;
-import org.jurassicraft.server.entity.EntityHandler;
-import org.jurassicraft.server.item.block.AncientDoorItem;
-//import org.jurassicraft.server.item.vehicles.HelicopterItem;
-//import org.jurassicraft.server.item.vehicles.HelicopterModuleItem;
-import org.jurassicraft.server.item.vehicles.HelicopterItem;
-import org.jurassicraft.server.tab.TabHandler;
-import org.jurassicraft.server.util.RegistryHandler;
-
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -34,8 +13,26 @@ import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.potion.PotionUtils;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.util.text.TextComponentTranslation;
+import org.jurassicraft.client.sound.SoundHandler;
+import org.jurassicraft.server.api.Hybrid;
+import org.jurassicraft.server.block.BlockHandler;
+import org.jurassicraft.server.block.tree.TreeType;
+import org.jurassicraft.server.conf.JurassiCraftConfig;
+import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.entity.DinosaurEntity;
+import org.jurassicraft.server.entity.EntityHandler;
+import org.jurassicraft.server.item.block.AncientDoorItem;
+import org.jurassicraft.server.item.vehicles.HelicopterItem;
+import org.jurassicraft.server.tab.TabHandler;
+import org.jurassicraft.server.util.RegistryHandler;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+//import org.jurassicraft.server.item.vehicles.HelicopterItem;
+//import org.jurassicraft.server.item.vehicles.HelicopterModuleItem;
 
 public class ItemHandler {
     public static final Map<TreeType, AncientDoorItem> ANCIENT_DOORS = new HashMap<>();
@@ -289,7 +286,7 @@ public class ItemHandler {
         for (Map.Entry<Integer, Dinosaur> entry : EntityHandler.getDinosaurs().entrySet()) {
             Dinosaur dinosaur = entry.getValue();
 
-            String[] boneTypes = dinosaur.getBones();
+            String[] boneTypes = dinosaur.getMetadata().getBones();
 
             for (String boneType : boneTypes) {
                 if (!(dinosaur instanceof Hybrid)) {

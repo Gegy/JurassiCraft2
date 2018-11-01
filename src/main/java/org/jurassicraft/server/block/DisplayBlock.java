@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jurassicraft.server.block.entity.DisplayBlockEntity;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.item.DisplayBlockItem;
 import org.jurassicraft.server.item.ItemHandler;
@@ -55,8 +56,9 @@ public class DisplayBlock extends BlockContainer {
             DisplayBlockEntity displayEntity = (DisplayBlockEntity) entity;
             Dinosaur dinosaur = displayEntity.getEntity().getDinosaur();
             if (dinosaur != null && !displayEntity.isSkeleton()) {
-                float width = MathHelper.clamp(dinosaur.getAdultSizeX() * 0.25F, 0.1F, 1.0F);
-                float height = MathHelper.clamp(dinosaur.getAdultSizeY() * 0.25F, 0.1F, 1.0F);
+                DinosaurMetadata metadata = dinosaur.getMetadata();
+                float width = MathHelper.clamp(metadata.getAdultSizeX() * 0.25F, 0.1F, 1.0F);
+                float height = MathHelper.clamp(metadata.getAdultSizeY() * 0.25F, 0.1F, 1.0F);
                 float halfWidth = width / 2.0F;
                 return new AxisAlignedBB(0.5 - halfWidth, 0, 0.5 - halfWidth, halfWidth + 0.5, height, halfWidth + 0.5);
             }

@@ -34,7 +34,7 @@ public class EatFoodItemEntityAI extends EntityAIBase {
                 for (EntityItem entity : items) {
                     ItemStack stack = entity.getItem();
                     Item item = stack.getItem();
-                    if (FoodHelper.isEdible(this.dinosaur, this.dinosaur.getDinosaur().getDiet(), item)) {
+                    if (FoodHelper.isEdible(this.dinosaur, this.dinosaur.getDinosaur().getMetadata().getDiet(), item)) {
                         double distance = this.dinosaur.getDistanceSq(entity);
                         if (distance < closestDistance) {
                             closestDistance = distance;

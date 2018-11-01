@@ -1,12 +1,5 @@
 package org.jurassicraft.server.block.fence;
 
-import java.util.List;
-
-import org.jurassicraft.server.block.entity.ElectricFenceBaseBlockEntity;
-import org.jurassicraft.server.block.entity.ElectricFenceWireBlockEntity;
-import org.jurassicraft.server.entity.DinosaurEntity;
-import org.jurassicraft.server.tab.TabHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
@@ -28,6 +21,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.jurassicraft.server.block.entity.ElectricFenceBaseBlockEntity;
+import org.jurassicraft.server.block.entity.ElectricFenceWireBlockEntity;
+import org.jurassicraft.server.entity.DinosaurEntity;
+import org.jurassicraft.server.tab.TabHandler;
+
+import java.util.List;
 
 public class ElectricFenceBaseBlock extends BlockContainer {
     public static final PropertyDirection FACING_BIAS = BlockHorizontal.FACING;
@@ -78,9 +77,7 @@ public class ElectricFenceBaseBlock extends BlockContainer {
         if (wireEntity instanceof ElectricFenceWireBlockEntity && ((ElectricFenceWireBlockEntity) wireEntity).isPowered()) {
             if (entity instanceof DinosaurEntity) {
                 DinosaurEntity dinosaur = (DinosaurEntity) entity;
-                if (dinosaur.getDinosaur().canClimb()) {
-                    return true;
-                }
+                return dinosaur.getDinosaur().getMetadata().canClimb();
             }
         }
         return false;

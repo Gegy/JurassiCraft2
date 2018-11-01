@@ -3,7 +3,7 @@
 	"poses": {
 		"IDLE": [
 		  {
-			"pose": "gallimimus_skeleton_idle.tbl",
+			"pose": "gallimimus_skeleton_idle",
 			"time": 1
 		  }
 		]

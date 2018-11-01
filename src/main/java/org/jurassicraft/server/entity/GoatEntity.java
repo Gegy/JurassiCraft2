@@ -33,10 +33,12 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.client.model.animation.EntityAnimation;
 import org.jurassicraft.client.model.animation.PoseHandler;
 import org.jurassicraft.client.sound.SoundHandler;
@@ -47,9 +49,9 @@ import org.jurassicraft.server.food.FoodType;
 import org.jurassicraft.server.item.ItemHandler;
 
 public class GoatEntity extends EntityAnimal implements Animatable, IEntityAdditionalSpawnData {
-    public static final PoseHandler<GoatEntity> BILLY_POSE_HANDLER = new PoseHandler<>("goat_billy", Lists.newArrayList(GrowthStage.ADULT));
-    public static final PoseHandler<GoatEntity> KID_POSE_HANDLER = new PoseHandler<>("goat_kid", Lists.newArrayList(GrowthStage.ADULT));
-    public static final PoseHandler<GoatEntity> NANNY_POSE_HANDLER = new PoseHandler<>("goat_nanny", Lists.newArrayList(GrowthStage.ADULT));
+    public static final PoseHandler<GoatEntity> BILLY_POSE_HANDLER = new PoseHandler<>(new ResourceLocation(JurassiCraft.MODID, "goat_billy"), Lists.newArrayList(GrowthStage.ADULT));
+    public static final PoseHandler<GoatEntity> KID_POSE_HANDLER = new PoseHandler<>(new ResourceLocation(JurassiCraft.MODID, "goat_kid"), Lists.newArrayList(GrowthStage.ADULT));
+    public static final PoseHandler<GoatEntity> NANNY_POSE_HANDLER = new PoseHandler<>(new ResourceLocation(JurassiCraft.MODID, "goat_nanny"), Lists.newArrayList(GrowthStage.ADULT));
 
     private static final DataParameter<Boolean> WATCHER_IS_RUNNING = EntityDataManager.createKey(GoatEntity.class, DataSerializers.BOOLEAN);
 
@@ -269,7 +271,7 @@ public class GoatEntity extends EntityAnimal implements Animatable, IEntityAddit
 
     @Override
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
-    	ItemStack stack =  player.getHeldItem(hand);
+        ItemStack stack = player.getHeldItem(hand);
         if (stack != null && stack.getItem() == Items.BUCKET && !player.capabilities.isCreativeMode && !this.isChild() && !this.milked && !this.billy) {
             player.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
             stack.shrink(1);

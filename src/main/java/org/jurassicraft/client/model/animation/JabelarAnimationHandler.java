@@ -4,6 +4,7 @@ import net.ilexiconn.llibrary.client.model.tools.AdvancedModelRenderer;
 import net.ilexiconn.llibrary.server.animation.Animation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jurassicraft.JurassiCraft;
@@ -11,6 +12,7 @@ import org.jurassicraft.client.model.AnimatableModel;
 import org.jurassicraft.server.api.Animatable;
 import org.jurassicraft.server.tabula.TabulaModelHelper;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -33,10 +35,10 @@ public class JabelarAnimationHandler<ENTITY extends EntityLivingBase & Animatabl
         this.init(entity, model);
     }
 
-    public static AnimatableModel loadModel(String model) {
+    public static AnimatableModel loadModel(ResourceLocation model) {
         try {
             return new AnimatableModel(TabulaModelHelper.loadTabulaModel(model), null);
-        } catch (Exception e) {
+        } catch (IOException e) {
             JurassiCraft.getLogger().error("Could not load Tabula model " + model, e);
         }
         return null;

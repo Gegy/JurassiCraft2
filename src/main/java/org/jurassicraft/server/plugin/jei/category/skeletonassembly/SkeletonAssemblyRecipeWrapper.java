@@ -1,19 +1,18 @@
 package org.jurassicraft.server.plugin.jei.category.skeletonassembly;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IRecipeWrapper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.item.DisplayBlockItem;
 import org.jurassicraft.server.item.FossilItem;
 import org.jurassicraft.server.item.ItemHandler;
 
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IRecipeWrapper;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class SkeletonAssemblyRecipeWrapper implements IRecipeWrapper {
     private final SkeletonInput input;
@@ -24,7 +23,7 @@ public class SkeletonAssemblyRecipeWrapper implements IRecipeWrapper {
 
     @Override
     public void getIngredients(IIngredients ingredients) {
-        String[][] recipe = this.input.dinosaur.getRecipe();
+        String[][] recipe = this.input.dinosaur.getMetadata().getRecipe();
         Map<String, FossilItem> fossils = this.input.fresh ? ItemHandler.FRESH_FOSSILS : ItemHandler.FOSSILS;
         int id = EntityHandler.getDinosaurId(this.input.dinosaur);
 

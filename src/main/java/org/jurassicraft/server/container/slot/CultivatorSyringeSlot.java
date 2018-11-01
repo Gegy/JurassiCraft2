@@ -4,7 +4,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.jurassicraft.server.dinosaur.Dinosaur;
-import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.item.SyringeItem;
 
 public class CultivatorSyringeSlot extends Slot {
@@ -14,7 +13,7 @@ public class CultivatorSyringeSlot extends Slot {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() instanceof SyringeItem && SyringeItem.getDinosaur(stack).getBirthType() == Dinosaur.BirthType.LIVE_BIRTH;
+        return stack.getItem() instanceof SyringeItem && SyringeItem.getDinosaur(stack).getMetadata().getBirthType() == Dinosaur.BirthType.LIVE_BIRTH;
     }
 
     @Override

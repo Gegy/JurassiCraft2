@@ -57,7 +57,7 @@ public class GrazeEntityAI extends EntityAIBase {
             //scans all blocks around the LOOK_RADIUS
             for (BlockPos pos : traverser) {
                 Block block = this.world.getBlockState(pos).getBlock();
-                if (FoodHelper.isEdible(this.dinosaur, this.dinosaur.getDinosaur().getDiet(), block) && pos != this.previousTarget) {
+                if (FoodHelper.isEdible(this.dinosaur, this.dinosaur.getDinosaur().getMetadata().getDiet(), block) && pos != this.previousTarget) {
                     this.target = pos;
                     for (int i = 0; i < 16; i++) {
                         IBlockState state = this.world.getBlockState(pos);

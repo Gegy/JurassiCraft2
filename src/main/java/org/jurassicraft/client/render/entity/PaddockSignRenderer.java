@@ -1,6 +1,10 @@
 package org.jurassicraft.client.render.entity;
 
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -11,13 +15,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jurassicraft.JurassiCraft;
+import org.jurassicraft.server.dinosaur.Dinosaur;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.entity.item.PaddockSignEntity;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 @SideOnly(Side.CLIENT)
@@ -50,7 +53,9 @@ public class PaddockSignRenderer implements IRenderFactory<PaddockSignEntity> {
             ResourceLocation texture = this.TEXTURES.get(id);
 
             if (texture == null) {
-                texture = new ResourceLocation(JurassiCraft.MODID, "textures/paddock/" + EntityHandler.getDinosaurById(id).getName().toLowerCase(Locale.ENGLISH) + ".png");
+                Dinosaur dinosaur = EntityHandler.getDinosaurById(id);
+                ResourceLocation identifier = dinosaur.getIdentifier();
+                texture = new ResourceLocation(identifier.getResourceDomain(), "textures/paddock/" + identifier.getResourcePath() + ".png");
                 this.TEXTURES.put(id, texture);
             }
 

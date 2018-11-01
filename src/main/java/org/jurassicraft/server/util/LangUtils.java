@@ -3,10 +3,9 @@ package org.jurassicraft.server.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.jurassicraft.server.dinosaur.Dinosaur;
-import org.jurassicraft.server.entity.DinosaurEntity;
-import org.jurassicraft.server.entity.DinosaurStatus;
 import org.jurassicraft.server.entity.item.AttractionSignEntity;
 import org.jurassicraft.server.plant.Plant;
 import org.jurassicraft.server.plant.PlantHandler;
@@ -76,11 +75,13 @@ public final class LangUtils
     }
 
     public static String getDinoName(Dinosaur dinosaur) {
-        return translate(LangUtils.ENTITY_NAME.get("jurassicraft." + dinosaur.getName().replace(" ", "_").toLowerCase(Locale.ENGLISH)));
+        ResourceLocation identifier = dinosaur.getIdentifier();
+        return translate(LangUtils.ENTITY_NAME.get(identifier.getResourceDomain() + "." + identifier.getResourcePath()));
     }
 
     public static String getDinoInfo(Dinosaur dinosaur) {
-        return translate("info." + dinosaur.getName().replace(" ", "_").toLowerCase(Locale.ENGLISH) + ".name");
+        ResourceLocation identifier = dinosaur.getIdentifier();
+        return translate("info." + identifier.getResourceDomain() + "." + identifier.getResourcePath() + ".name");
     }
 
     public static String getAttractionSignName(ItemStack stack) {

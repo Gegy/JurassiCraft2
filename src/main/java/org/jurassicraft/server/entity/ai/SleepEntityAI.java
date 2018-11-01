@@ -25,7 +25,7 @@ public class SleepEntityAI extends EntityAIBase {
     public boolean shouldExecute() {
         World world = this.dinosaur.world;
 
-        boolean marineAnimal = this.dinosaur.getDinosaur().isMarineCreature();
+        boolean marineAnimal = this.dinosaur.getDinosaur().getMetadata().isMarineCreature();
 
         if ((this.dinosaur.onGround || this.dinosaur.isRiding() || marineAnimal) && this.dinosaur.isAlive() && this.dinosaur.shouldSleep() && !this.dinosaur.isSleeping() && this.dinosaur.getStayAwakeTime() <= 0) {
             if (marineAnimal) {

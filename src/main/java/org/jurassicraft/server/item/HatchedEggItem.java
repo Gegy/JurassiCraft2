@@ -10,12 +10,13 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import java.util.List;
-import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.util.LangUtils;
+
+import java.util.List;
 
 public class HatchedEggItem extends DNAContainerItem {
     public HatchedEggItem() {
@@ -28,12 +29,13 @@ public class HatchedEggItem extends DNAContainerItem {
     public String getItemStackDisplayName(ItemStack stack) {
         Dinosaur dinosaur = this.getDinosaur(stack);
 
-        return LangUtils.translate(dinosaur.givesDirectBirth() ? "item.gestated.name" :"item.hatched_egg.name").replace("{dino}", LangUtils.getDinoName(dinosaur));
+        DinosaurMetadata metadata = dinosaur.getMetadata();
+        return LangUtils.translate(metadata.givesDirectBirth() ? "item.gestated.name" : "item.hatched_egg.name").replace("{dino}", LangUtils.getDinoName(dinosaur));
     }
-    
+
     @Override
     public void addInformation(ItemStack stack, World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-    	tooltip.add(TextFormatting.GOLD +LangUtils.translate("gender.name") +": "+ this.getItemGender(stack));
+        tooltip.add(TextFormatting.GOLD + LangUtils.translate("gender.name") + ": " + this.getItemGender(stack));
     }
 
     public Dinosaur getDinosaur(ItemStack stack) {
@@ -41,18 +43,17 @@ public class HatchedEggItem extends DNAContainerItem {
     }
 
     public String getItemGender(ItemStack stack) {
-    	Boolean gender = null;
+        Boolean gender = null;
         NBTTagCompound nbt = stack.getTagCompound();
-  
+
         if (stack.hasTagCompound() && nbt.hasKey("Gender")) {
 
             gender = nbt.getBoolean("Gender");
-
         }
-       
+
         return LangUtils.getGenderMode(gender != null ? (gender == true ? 1 : 2) : 0);
     }
-    
+
     public boolean getGender(EntityPlayer player, ItemStack stack) {
         NBTTagCompound nbt = stack.getTagCompound();
 
@@ -93,25 +94,21 @@ public class HatchedEggItem extends DNAContainerItem {
             if (!world.isRemote) {
                 Dinosaur dinosaur = this.getDinosaur(stack);
 
-                try {
-                    DinosaurEntity entity = dinosaur.getDinosaurClass().getDeclaredConstructor(World.class).newInstance(world);
+                DinosaurEntity entity = dinosaur.construct(world);
 
-                    entity.setPosition(pos.getX() + hitX, pos.getY(), pos.getZ() + hitZ);
-                    entity.setAge(0);
-                    entity.setGenetics(this.getGeneticCode(player, stack));
-                    entity.setDNAQuality(this.getDNAQuality(player, stack));
-                    entity.setMale(this.getGender(player, stack));
-                    if (!player.isSneaking()) {
-                        entity.setOwner(player);
-                    }
+                entity.setPosition(pos.getX() + hitX, pos.getY(), pos.getZ() + hitZ);
+                entity.setAge(0);
+                entity.setGenetics(getGeneticCode(player, stack));
+                entity.setDNAQuality(getDNAQuality(player, stack));
+                entity.setMale(this.getGender(player, stack));
+                if (!player.isSneaking()) {
+                    entity.setOwner(player);
+                }
 
-                    world.spawnEntity(entity);
+                world.spawnEntity(entity);
 
-                    if (!player.capabilities.isCreativeMode) {
-                        stack.shrink(1);
-                    }
-                } catch (ReflectiveOperationException e) {
-                    JurassiCraft.getLogger().warn("Failed to spawn dinosaur from hatched egg", e);
+                if (!player.capabilities.isCreativeMode) {
+                    stack.shrink(1);
                 }
             }
 

@@ -9,11 +9,10 @@ import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
-
-import net.minecraft.world.World;
 import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.server.container.CultivateContainer;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.food.FoodNutrients;
@@ -43,11 +42,15 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
 
     @Override
     protected boolean canProcess(int process) {
-    	ItemStack itemstack = this.slots.get(0);
+        ItemStack itemstack = this.slots.get(0);
         if (itemstack.getItem() == ItemHandler.SYRINGE && this.waterLevel == 2) {
             Dinosaur dino = EntityHandler.getDinosaurById(itemstack.getItemDamage());
-            if (dino != null && dino.getBirthType() == Dinosaur.BirthType.LIVE_BIRTH) {
-                return this.lipids >= dino.getLipids() && this.minerals >= dino.getMinerals() && this.proximates >= dino.getProximates() && this.vitamins >= dino.getVitamins();
+            if (dino == null) {
+                return false;
+            }
+            DinosaurMetadata meta = dino.getMetadata();
+            if (meta.getBirthType() == Dinosaur.BirthType.LIVE_BIRTH) {
+                return this.lipids >= meta.getLipids() && this.minerals >= meta.getMinerals() && this.proximates >= meta.getProximates() && this.vitamins >= meta.getVitamins();
             }
         }
 
@@ -60,10 +63,11 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
         Dinosaur dinosaur = EntityHandler.getDinosaurById(syringe.getItemDamage());
 
         if (dinosaur != null) {
-            this.lipids -= dinosaur.getLipids();
-            this.minerals -= dinosaur.getMinerals();
-            this.vitamins -= dinosaur.getVitamins();
-            this.proximates -= dinosaur.getProximates();
+            DinosaurMetadata metadata = dinosaur.getMetadata();
+            this.lipids -= metadata.getLipids();
+            this.minerals -= metadata.getMinerals();
+            this.vitamins -= metadata.getVitamins();
+            this.proximates -= metadata.getProximates();
             this.waterLevel--;
 
             ItemStack hatchedEgg = new ItemStack(ItemHandler.HATCHED_EGG, 1, syringe.getItemDamage());
@@ -110,7 +114,6 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
                 if ((this.proximates < MAX_NUTRIENTS) || (this.minerals < MAX_NUTRIENTS) || (this.vitamins < MAX_NUTRIENTS) || (this.lipids < MAX_NUTRIENTS)) {
                     this.consumeNutrients();
                     sync = true;
-
                 }
             }
         }
@@ -127,7 +130,7 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
 
         if (nutrients != null) {
             if (foodStack.getItem() instanceof ItemBucketMilk) {
-            	this.slots.set(1, new ItemStack(Items.BUCKET));
+                this.slots.set(1, new ItemStack(Items.BUCKET));
             } else {
                 foodStack.shrink(1);
                 if (foodStack.getCount() <= 0) {
@@ -169,7 +172,7 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
     @Override
     protected void onSlotUpdate() {
         super.onSlotUpdate();
-        if(this.getStackInSlot(0).isEmpty()) {
+        if (this.getStackInSlot(0).isEmpty()) {
             this.dinosaurEntity = null;
         }
     }
@@ -231,21 +234,18 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
     }
 
     public DinosaurEntity getDinosaurEntity() {
-        if(this.getStackInSlot(0).isEmpty()){
+        if (this.getStackInSlot(0).isEmpty()) {
             return null;
         }
         return dinosaurEntity == null ? createEntity() : dinosaurEntity;
     }
 
     private DinosaurEntity createEntity() {
-        try {
-            this.dinosaurEntity = EntityHandler.getDinosaurById(this.getStackInSlot(0).getMetadata()).getDinosaurClass().getDeclaredConstructor(World.class).newInstance(this.world);
-            this.dinosaurEntity.setMale(this.temperature > 50);
-            this.dinosaurEntity.setFullyGrown();
-            this.dinosaurEntity.getAttributes().setScaleModifier(1f);
-        } catch (ReflectiveOperationException e){
-            throw new RuntimeException("Unable to create dinosaur entity", e);
-        }
+        Dinosaur dinosaur = EntityHandler.getDinosaurById(this.getStackInSlot(0).getMetadata());
+        this.dinosaurEntity = dinosaur.construct(this.world);
+        this.dinosaurEntity.setMale(this.temperature > 50);
+        this.dinosaurEntity.setFullyGrown();
+        this.dinosaurEntity.getAttributes().setScaleModifier(1f);
         return dinosaurEntity;
     }
 
@@ -355,7 +355,7 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
     }
 
     public Dinosaur getDinosaur() {
-    	ItemStack stack = this.slots.get(0);
+        ItemStack stack = this.slots.get(0);
         if (stack.isEmpty()) {
             return EntityHandler.getDinosaurById(stack.getItemDamage());
         }
@@ -378,21 +378,21 @@ public class CultivatorBlockEntity extends MachineBaseBlockEntity implements Tem
         return 1;
     }
 
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
 
-	@Override
-	protected NonNullList<ItemStack> getSlots() {
+    @Override
+    protected NonNullList<ItemStack> getSlots() {
 //        NonNullList<ItemStack> slots = NonNullList.withSize(5, ItemStack.EMPTY);
-		return slots;
-	}
+        return slots;
+    }
 
-	@Override
-	protected void setSlots(NonNullList<ItemStack> slot) {
+    @Override
+    protected void setSlots(NonNullList<ItemStack> slot) {
 //		ItemStack stack = this.slots.get(1);
 //		stack.grow(slot.size());
-		this.slots = slot;
-	}
+        this.slots = slot;
+    }
 }

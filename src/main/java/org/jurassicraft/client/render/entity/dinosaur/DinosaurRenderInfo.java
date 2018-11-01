@@ -17,8 +17,6 @@ import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.entity.GrowthStage;
 import org.jurassicraft.server.tabula.TabulaModelHelper;
 
-import java.util.Locale;
-
 @SideOnly(Side.CLIENT)
 public class DinosaurRenderInfo implements IRenderFactory<DinosaurEntity> {
     private static TabulaModel DEFAULT_EGG_MODEL;
@@ -26,7 +24,7 @@ public class DinosaurRenderInfo implements IRenderFactory<DinosaurEntity> {
 
     static {
         try {
-            DEFAULT_EGG_MODEL = new TabulaModel(TabulaModelHelper.loadTabulaModel("/assets/jurassicraft/models/entities/egg/tyrannosaurus"));
+            DEFAULT_EGG_MODEL = new TabulaModel(TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/entities/egg/tyrannosaurus")));
             DEFAULT_EGG_TEXTURE = new ResourceLocation(JurassiCraft.MODID, "textures/entities/egg/tyrannosaurus.png");
         } catch (Exception e) {
             e.printStackTrace();
@@ -56,9 +54,12 @@ public class DinosaurRenderInfo implements IRenderFactory<DinosaurEntity> {
         this.modelSkeleton = this.loadModel(GrowthStage.SKELETON);
 
         try {
-            String name = dinosaur.getName().toLowerCase(Locale.ENGLISH);
-            this.eggModel = new TabulaModel(TabulaModelHelper.loadTabulaModel("/assets/jurassicraft/models/entities/egg/" + name));
-            this.eggTexture = new ResourceLocation(JurassiCraft.MODID, "textures/entities/egg/" + name + ".png");
+            ResourceLocation identifier = dinosaur.getIdentifier();
+            String domain = identifier.getResourceDomain();
+            String path = identifier.getResourcePath();
+
+            this.eggModel = new TabulaModel(TabulaModelHelper.loadTabulaModel(new ResourceLocation(domain, "models/entities/egg/" + path)));
+            this.eggTexture = new ResourceLocation(domain, "textures/entities/egg/" + path + ".png");
         } catch (Exception e) {
             this.eggModel = DEFAULT_EGG_MODEL;
             this.eggTexture = DEFAULT_EGG_TEXTURE;

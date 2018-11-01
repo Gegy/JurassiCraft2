@@ -19,7 +19,7 @@ public class VelociraptorEntity extends DinosaurEntity {
     public VelociraptorEntity(World world) {
         super(world);
         this.target(GoatEntity.class, EntityPlayer.class, EntityAnimal.class, EntityVillager.class, DilophosaurusEntity.class, GallimimusEntity.class, ParasaurolophusEntity.class, TriceratopsEntity.class, MicroraptorEntity.class, MussaurusEntity.class);
-        this.tasks.addTask(1, new LeapingMeleeEntityAI(this, this.dinosaur.getAttackSpeed()));
+        this.tasks.addTask(1, new LeapingMeleeEntityAI(this, this.dinosaur.getMetadata().getAttackSpeed()));
     }
 
     @Override

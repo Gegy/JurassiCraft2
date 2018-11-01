@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.server.block.entity.CultivatorBlockEntity;
-import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.plugin.jei.JurassiCraftJEIPlugin;
 
 import java.util.List;
@@ -64,13 +64,13 @@ public class CultivatorRecipeCategory implements IRecipeCategory<CultivatorRecip
         stackGroup.init(1, false, 105, 6);
         stackGroup.set(1, ingredients.getOutputs(ItemStack.class).get(0));
 
-        Dinosaur dinosaur = recipeWrapper.getDinosaur();
+        DinosaurMetadata metadata = recipeWrapper.getDinosaur().getMetadata();
 
         nutrientBarList = Lists.newArrayList(
-                new NutrientBar(dinosaur::getProximates, 0),
-                new NutrientBar(dinosaur::getMinerals, 1),
-                new NutrientBar(dinosaur::getVitamins, 2),
-                new NutrientBar(dinosaur::getLipids, 3)
+                new NutrientBar(metadata::getProximates, 0),
+                new NutrientBar(metadata::getMinerals, 1),
+                new NutrientBar(metadata::getVitamins, 2),
+                new NutrientBar(metadata::getLipids, 3)
         );
     }
 

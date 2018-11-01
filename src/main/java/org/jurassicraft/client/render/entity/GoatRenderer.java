@@ -31,9 +31,9 @@ public class GoatRenderer extends RenderLiving<GoatEntity> {
         TabulaModelContainer billy = null;
         TabulaModelContainer nanny = null;
         try {
-            kid = TabulaModelHelper.loadTabulaModel("assets/jurassicraft/models/entities/goat_kid/adult/goat_kid");
-            billy = TabulaModelHelper.loadTabulaModel("assets/jurassicraft/models/entities/goat_billy/adult/goat_billy");
-            nanny = TabulaModelHelper.loadTabulaModel("assets/jurassicraft/models/entities/goat_nanny/adult/goat_nanny");
+            kid = TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/entities/goat_kid/adult/goat_kid"));
+            billy = TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/entities/goat_billy/adult/goat_billy"));
+            nanny = TabulaModelHelper.loadTabulaModel(new ResourceLocation(JurassiCraft.MODID, "models/entities/goat_nanny/adult/goat_nanny"));
         } catch (IOException e) {
             e.printStackTrace();
         }

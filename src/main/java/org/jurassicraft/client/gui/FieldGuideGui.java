@@ -117,7 +117,7 @@ public class FieldGuideGui extends GuiScreen {
             this.drawBar(statisticsX, y + 45, this.entity.isCarcass() ? 0 : this.entity.getHealth(), this.entity.getMaxHealth(), 0xFF0000);
             this.drawBar(statisticsX, y + 75, this.fieldGuideInfo.hunger, this.entity.getMetabolism().getMaxEnergy(), 0x94745A);
             this.drawBar(statisticsX, y + 105, this.fieldGuideInfo.thirst, this.entity.getMetabolism().getMaxWater(), 0x0000FF);
-            this.drawBar(statisticsX, y + 135, this.entity.getDinosaurAge(), dinosaur.getMaximumAge(), 0x00FF00);
+            this.drawBar(statisticsX, y + 135, this.entity.getDinosaurAge(), dinosaur.getMetadata().getMaximumAge(), 0x00FF00);
 
             this.drawCenteredScaledString(LangUtils.translate(LangUtils.GUI.get("days_old")).replace("{value}", String.valueOf(this.entity.getDaysExisted())), statisticTextX, y + 155, 1.0F, 0);
 

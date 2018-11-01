@@ -9,43 +9,43 @@ public enum DinosaurStatus {
     CARNIVOROUS {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getDiet().canEat(entity, FoodType.MEAT);
+            return entity.getMetadata().getDiet().canEat(entity, FoodType.MEAT);
         }
     },
     PISCIVOROUS {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getDiet().canEat(entity, FoodType.FISH);
+            return entity.getMetadata().getDiet().canEat(entity, FoodType.FISH);
         }
     },
     HERBIVOROUS {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getDiet().canEat(entity, FoodType.PLANT);
+            return entity.getMetadata().getDiet().canEat(entity, FoodType.PLANT);
         }
     },
     INSECTIVOROUS {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getDiet().canEat(entity, FoodType.INSECT);
+            return entity.getMetadata().getDiet().canEat(entity, FoodType.INSECT);
         }
     },
     DIURNAL {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getSleepTime() == SleepTime.DIURNAL;
+            return entity.getMetadata().getSleepTime() == SleepTime.DIURNAL;
         }
     },
     NOCTURNAL {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getSleepTime() == SleepTime.NOCTURNAL;
+            return entity.getMetadata().getSleepTime() == SleepTime.NOCTURNAL;
         }
     },
     CREPUSCULAR {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return entity.getDinosaur().getSleepTime() == SleepTime.CREPUSCULAR;
+            return entity.getMetadata().getSleepTime() == SleepTime.CREPUSCULAR;
         }
     },
     TAMED {
@@ -81,7 +81,7 @@ public enum DinosaurStatus {
     DROWNING {
         @Override
         public boolean apply(DinosaurEntity entity, DinosaurEntity.FieldGuideInfo info) {
-            return !entity.getDinosaur().isMarineCreature() && entity.getAir() < 200;
+            return !entity.getMetadata().isMarineCreature() && entity.getAir() < 200;
         }
     },
     SLEEPY {

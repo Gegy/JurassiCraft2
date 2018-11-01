@@ -51,7 +51,7 @@ public class DinosaurEggItem extends DNAContainerItem {
         Collections.sort(dinosaurs);
         if(this.isInCreativeTab(tab)) {
             for (Dinosaur dinosaur : dinosaurs) {
-                if (dinosaur.shouldRegister() && !dinosaur.givesDirectBirth()) {
+                if (dinosaur.shouldRegister() && !dinosaur.getMetadata().givesDirectBirth()) {
                     subtypes.add(new ItemStack(this, 1, EntityHandler.getDinosaurId(dinosaur)));
                 }
             }

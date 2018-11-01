@@ -2,7 +2,6 @@ package org.jurassicraft.server.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 public class DisplayBlockItem extends Item {
     public DisplayBlockItem() {
@@ -44,7 +42,7 @@ public class DisplayBlockItem extends Item {
     public void initModels(Collection<Dinosaur> dinos, RenderingHandler renderer) {
         for (Dinosaur dino : dinos) {
             int dex = EntityHandler.getDinosaurId(dino);
-            String dinoName = dino.getName().toLowerCase(Locale.ENGLISH).replaceAll(" ", "_");
+            String dinoName = dino.getIdentifier().getResourcePath();
             renderer.registerItemRenderer(this, getMetadata(dex, 0, false), "action_figure/action_figure_" + dinoName);
             renderer.registerItemRenderer(this, getMetadata(dex, 1, false), "action_figure/action_figure_" + dinoName);
             renderer.registerItemRenderer(this, getMetadata(dex, 2, false), "action_figure/action_figure_" + dinoName);

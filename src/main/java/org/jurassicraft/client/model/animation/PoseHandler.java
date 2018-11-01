@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import net.ilexiconn.llibrary.client.model.tools.AdvancedModelRenderer;
 import net.ilexiconn.llibrary.server.animation.Animation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,14 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
@@ -40,19 +38,12 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
     private Map<GrowthStage, ModelData> modelData;
 
     public PoseHandler(Dinosaur dinosaur) {
-        this(dinosaur.getName(), dinosaur.getSupportedStages());
+        this(dinosaur.getIdentifier(), dinosaur.getSupportedStages());
     }
 
-    public PoseHandler(String name, List<GrowthStage> supported) {
-        name = name.toLowerCase(Locale.ENGLISH).replaceAll(" ", "_");
+    public PoseHandler(ResourceLocation identifier, List<GrowthStage> supported) {
         this.modelData = new EnumMap<>(GrowthStage.class);
-        URI entityResource;
-        try {
-            entityResource = new URI("/assets/jurassicraft/models/entities/" + name + "/");
-        } catch (URISyntaxException e) {
-            JurassiCraft.getLogger().fatal("Illegal URI /assets/jurassicraft/models/entities/" + name + "/", e);
-            return;
-        }
+        ResourceLocation entityResource = new ResourceLocation(identifier.getResourceDomain(), "models/entities/" + identifier.getResourcePath());
         for (GrowthStage growth : GrowthStage.values()) {
             try {
                 GrowthStage actualGrowth = growth;
@@ -62,32 +53,32 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
                 if (this.modelData.containsKey(actualGrowth)) {
                     this.modelData.put(growth, this.modelData.get(actualGrowth));
                 } else {
-                    ModelData loaded = this.loadModelData(entityResource, name, actualGrowth);
+                    ModelData loaded = this.loadModelData(identifier, entityResource, actualGrowth);
                     this.modelData.put(growth, loaded);
                     if (actualGrowth != growth) {
                         this.modelData.put(actualGrowth, loaded);
                     }
                 }
             } catch (Exception e) {
-                JurassiCraft.INSTANCE.getLogger().fatal("Failed to parse growth stage " + growth + " for dinosaur " + name, e);
+                JurassiCraft.getLogger().fatal("Failed to parse growth stage " + growth + " for dinosaur " + identifier, e);
                 this.modelData.put(growth, new ModelData());
             }
         }
     }
 
-    private ModelData loadModelData(URI resourceURI, String name, GrowthStage growth) {
-        String growthName = growth.name().toLowerCase(Locale.ROOT);
-        URI growthSensitiveDir = resourceURI.resolve(growthName + "/");
-        URI definitionFile = growthSensitiveDir.resolve(name + "_" + growthName + ".json");
-        InputStream modelStream = TabulaModelHelper.class.getResourceAsStream(definitionFile.toString());
-        if (modelStream == null) {
-            throw new IllegalArgumentException("No model definition for the dino " + name + " with grow-state " + growth + " exists. Expected at " + definitionFile);
-        }
-        try {
+    private ModelData loadModelData(ResourceLocation identifier, ResourceLocation origin, GrowthStage growth) {
+        String namespace = origin.getResourceDomain();
+        String name = identifier.getResourcePath();
+        ResourceLocation stageOrigin = new ResourceLocation(namespace, origin.getResourcePath() + "/" + growth.getKey());
+        ResourceLocation definition = new ResourceLocation(namespace, stageOrigin.getResourcePath() + "/" + name + "_" + growth.getKey() + ".json");
+        try (InputStream modelStream = TabulaModelHelper.class.getResourceAsStream("/assets/" + definition.getResourceDomain() + "/" + definition.getResourcePath())) {
+            if (modelStream == null) {
+                throw new IllegalArgumentException("No model definition for the dino " + identifier + " with grow-state " + growth + " exists. Expected at " + definition);
+            }
             Reader reader = new InputStreamReader(modelStream);
             AnimationsDTO rawAnimations = GSON.fromJson(reader, AnimationsDTO.class);
-            ModelData data = this.loadModelData(growthSensitiveDir, rawAnimations);
-            JurassiCraft.getLogger().debug("Successfully loaded " + name + "(" + growth + ") from " + definitionFile);
+            ModelData data = this.loadModelData(stageOrigin, rawAnimations);
+            JurassiCraft.getLogger().debug("Successfully loaded " + identifier + "(" + growth + ") from " + definition);
             reader.close();
             return data;
         } catch (IOException e) {
@@ -96,13 +87,13 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
         }
     }
 
-    private ModelData loadModelData(URI resourceURI, AnimationsDTO animationsDefinition) {
+    private ModelData loadModelData(ResourceLocation origin, AnimationsDTO animationsDefinition) {
         if (animationsDefinition == null || animationsDefinition.poses == null
                 || animationsDefinition.poses.get(EntityAnimation.IDLE.name()) == null
                 || animationsDefinition.poses.get(EntityAnimation.IDLE.name()).length == 0) {
             throw new IllegalArgumentException("Animation files must define at least one pose for the IDLE animation");
         }
-        List<String> posedModelResources = new ArrayList<>();
+        List<ResourceLocation> posedModelResources = new ArrayList<>();
         for (PoseDTO[] poses : animationsDefinition.poses.values()) {
             if (poses == null) {
                 continue;
@@ -114,7 +105,7 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
                 if (pose.pose == null) {
                     throw new IllegalArgumentException("Every pose must define a pose file");
                 }
-                String resolvedRes = this.resolve(resourceURI, pose.pose);
+                ResourceLocation resolvedRes = new ResourceLocation(origin.getResourceDomain(), origin.getResourcePath() + "/" + pose.pose);
                 int index = posedModelResources.indexOf(resolvedRes);
                 if (index == -1) {
                     pose.index = posedModelResources.size();
@@ -146,7 +137,7 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
     }
 
     @SideOnly(Side.CLIENT)
-    private ModelData loadModelDataClient(List<String> posedModelResources, Map<Animation, float[][]> animations) {
+    private ModelData loadModelDataClient(List<ResourceLocation> posedModelResources, Map<Animation, float[][]> animations) {
         PosedCuboid[][] posedCuboids = new PosedCuboid[posedModelResources.size()][];
         AnimatableModel mainModel = JabelarAnimationHandler.loadModel(posedModelResources.get(0));
         if (mainModel == null) {
@@ -155,7 +146,7 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
         String[] identifiers = mainModel.getCubeIdentifierArray();
         int partCount = identifiers.length;
         for (int i = 0; i < posedModelResources.size(); i++) {
-            String resource = posedModelResources.get(i);
+            ResourceLocation resource = posedModelResources.get(i);
             AnimatableModel model = JabelarAnimationHandler.loadModel(resource);
             if (model == null) {
                 throw new IllegalArgumentException("Couldn't load the model from " + resource);
@@ -175,11 +166,6 @@ public class PoseHandler<ENTITY extends EntityLivingBase & Animatable> {
             posedCuboids[i] = pose;
         }
         return new ModelData(posedCuboids, animations);
-    }
-
-    private String resolve(URI dinoDirURI, String posePath) {
-        URI uri = dinoDirURI.resolve(posePath);
-        return uri.toString();
     }
 
     @SideOnly(Side.CLIENT)

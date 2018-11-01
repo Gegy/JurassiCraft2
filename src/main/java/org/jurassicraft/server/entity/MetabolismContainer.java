@@ -20,7 +20,7 @@ public class MetabolismContainer {
     public MetabolismContainer(DinosaurEntity dinosaur) {
         this.dinosaur = dinosaur;
 
-        double health = dinosaur.getDinosaur().getAdultHealth();
+        double health = dinosaur.getDinosaur().getMetadata().getAdultHealth();
 
         this.maxEnergy = (int) (health / 10.0 * 24000);
         this.maxWater = (int) (health / 10.0 * 24000);

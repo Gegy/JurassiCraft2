@@ -52,9 +52,8 @@ public class DinosaurSpawnEggItem extends Item {
     public DinosaurEntity spawnDinosaur(World world, EntityPlayer player, ItemStack stack, double x, double y, double z) {
         Dinosaur dinosaur = this.getDinosaur(stack);
         if (dinosaur != null) {
-            Class<? extends DinosaurEntity> entityClass = dinosaur.getDinosaurClass();
             try {
-                DinosaurEntity entity = entityClass.getConstructor(World.class).newInstance(player.world);
+                DinosaurEntity entity = dinosaur.construct(world);
                 entity.setDNAQuality(100);
 
                 int mode = this.getMode(stack);
@@ -135,7 +134,7 @@ public class DinosaurSpawnEggItem extends Item {
 
                 if (tile instanceof TileEntityMobSpawner) {
                     MobSpawnerBaseLogic spawnerLogic = ((TileEntityMobSpawner) tile).getSpawnerBaseLogic();
-                    spawnerLogic.setEntityId(EntityList.getKey(this.getDinosaur(stack).getDinosaurClass()));
+                    spawnerLogic.setEntityId(EntityList.getKey(this.getDinosaur(stack).getMetadata().getDinosaurClass()));
                     tile.markDirty();
 
                     if (!player.capabilities.isCreativeMode) {

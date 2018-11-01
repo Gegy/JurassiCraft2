@@ -57,7 +57,7 @@ public class Herd implements Iterable<DinosaurEntity> {
         if (this.stateTicks > 0 && this.failedPathTicks < this.members.size() * 2) {
             this.stateTicks--;
         } else {
-            if (this.herdType.shouldRandomlyFlock()) {
+            if (this.herdType.getMetadata().shouldRandomlyFlock()) {
                 this.state = this.state == State.MOVING ? State.IDLE : State.MOVING;
             } else {
                 this.state = State.IDLE;
@@ -157,11 +157,11 @@ public class Herd implements Iterable<DinosaurEntity> {
                         double navigateZ = entity.posZ + entityMoveZ;
 
                         Dinosaur dinosaur = entity.getDinosaur();
-                        double speed = this.state == State.IDLE ? 0.8 : dinosaur.getFlockSpeed();
+                        double speed = this.state == State.IDLE ? 0.8 : dinosaur.getMetadata().getFlockSpeed();
 
                         if (this.fleeing) {
-                            if (dinosaur.getAttackSpeed() > speed) {
-                                speed = dinosaur.getAttackSpeed();
+                            if (dinosaur.getMetadata().getAttackSpeed() > speed) {
+                                speed = dinosaur.getMetadata().getAttackSpeed();
                             }
                         }
 
@@ -271,8 +271,8 @@ public class Herd implements Iterable<DinosaurEntity> {
                 if (!entity.isCarcass() && !entity.isDead && !(entity.getMetabolism().isStarving() || entity.getMetabolism().isDehydrated())) {
                     Herd otherHerd = entity.herd;
                     if (otherHerd == null || otherHerd.members.size() == 1) {
-                        if (this.size() >= this.herdType.getMaxHerdSize()) {
-                            if (this.leader != null && GameRuleHandler.KILL_HERD_OUTCAST.getBoolean(this.leader.world) && this.herdType.getDinosaurType() == Dinosaur.DinosaurType.AGGRESSIVE && !this.enemies.contains(entity)) {
+                        if (this.size() >= this.herdType.getMetadata().getMaxHerdSize()) {
+                            if (this.leader != null && GameRuleHandler.KILL_HERD_OUTCAST.getBoolean(this.leader.world) && this.herdType.getMetadata().getDinosaurType() == Dinosaur.DinosaurType.AGGRESSIVE && !this.enemies.contains(entity)) {
                                 this.enemies.add(entity);
                             }
                             return;
@@ -287,7 +287,7 @@ public class Herd implements Iterable<DinosaurEntity> {
             for (Herd otherHerd : otherHerds) {
                 int originalSize = this.size();
 
-                if (otherHerd.size() <= originalSize && otherHerd.size() + originalSize < this.herdType.getMaxHerdSize()) {
+                if (otherHerd.size() <= originalSize && otherHerd.size() + originalSize < this.herdType.getMetadata().getMaxHerdSize()) {
                     for (DinosaurEntity member : otherHerd) {
                         this.members.add(member);
                         member.herd = this;
@@ -298,8 +298,8 @@ public class Herd implements Iterable<DinosaurEntity> {
                     this.fleeing |= otherHerd.fleeing;
 
                     otherHerd.disband();
-                } else if (originalSize + 1 > this.herdType.getMaxHerdSize()) {
-                    if (this.leader != null && GameRuleHandler.KILL_HERD_OUTCAST.getBoolean(this.leader.world) && this.herdType.getDinosaurType() == Dinosaur.DinosaurType.AGGRESSIVE) {
+                } else if (originalSize + 1 > this.herdType.getMetadata().getMaxHerdSize()) {
+                    if (this.leader != null && GameRuleHandler.KILL_HERD_OUTCAST.getBoolean(this.leader.world) && this.herdType.getMetadata().getDinosaurType() == Dinosaur.DinosaurType.AGGRESSIVE) {
                         for (DinosaurEntity entity : otherHerd) {
                             if (!this.enemies.contains(entity)) {
                                 this.enemies.add(entity);
@@ -387,7 +387,7 @@ public class Herd implements Iterable<DinosaurEntity> {
     }
 
     public boolean shouldDefend(List<EntityLivingBase> entities) {
-        return this.getScore(this) + (this.herdType.getAttackBias() * this.members.size()) > this.getScore(entities);
+        return this.getScore(this) + (this.herdType.getMetadata().getAttackBias() * this.members.size()) > this.getScore(entities);
     }
 
     public double getScore(Iterable<? extends EntityLivingBase> entities) {

@@ -1,11 +1,28 @@
 package org.jurassicraft.client.render;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.google.common.collect.Maps;
+import net.ilexiconn.llibrary.client.model.tabula.TabulaModelHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.world.ColorizerFoliage;
+import net.minecraft.world.biome.BiomeColorHelper;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.client.model.MultipartStateMap;
 import org.jurassicraft.client.model.animation.EntityAnimator;
@@ -19,16 +36,43 @@ import org.jurassicraft.client.model.animation.entity.ParasaurolophusAnimator;
 import org.jurassicraft.client.model.animation.entity.TriceratopsAnimator;
 import org.jurassicraft.client.model.animation.entity.TyrannosaurusAnimator;
 import org.jurassicraft.client.model.animation.entity.VelociraptorAnimator;
-import org.jurassicraft.client.render.block.*;
-import org.jurassicraft.client.render.entity.*;
+import org.jurassicraft.client.render.block.CleaningStationRenderer;
+import org.jurassicraft.client.render.block.DNAExtractorRenderer;
+import org.jurassicraft.client.render.block.DNASequencerRenderer;
+import org.jurassicraft.client.render.block.DisplayBlockRenderer;
+import org.jurassicraft.client.render.block.ElectricFencePoleRenderer;
+import org.jurassicraft.client.render.block.FeederRenderer;
+import org.jurassicraft.client.render.block.IncubatorRenderer;
+import org.jurassicraft.client.render.entity.AttractionSignRenderer;
+import org.jurassicraft.client.render.entity.DinosaurEggRenderer;
+import org.jurassicraft.client.render.entity.FordExplorerRenderer;
+import org.jurassicraft.client.render.entity.GoatRenderer;
+import org.jurassicraft.client.render.entity.HeliRenderer;
+import org.jurassicraft.client.render.entity.JeepWranglerRenderer;
+import org.jurassicraft.client.render.entity.MuralRenderer;
+import org.jurassicraft.client.render.entity.NullRenderer;
+import org.jurassicraft.client.render.entity.PaddockSignRenderer;
+import org.jurassicraft.client.render.entity.VenomRenderer;
 import org.jurassicraft.client.render.entity.dinosaur.DinosaurRenderInfo;
-import org.jurassicraft.server.block.*;
-import org.jurassicraft.server.block.entity.*;
+import org.jurassicraft.server.block.BlockHandler;
+import org.jurassicraft.server.block.EncasedFossilBlock;
+import org.jurassicraft.server.block.FossilBlock;
+import org.jurassicraft.server.block.FossilizedTrackwayBlock;
+import org.jurassicraft.server.block.NestFossilBlock;
+import org.jurassicraft.server.block.TourRailBlock;
+import org.jurassicraft.server.block.entity.CleaningStationBlockEntity;
+import org.jurassicraft.server.block.entity.DNAExtractorBlockEntity;
+import org.jurassicraft.server.block.entity.DNASequencerBlockEntity;
+import org.jurassicraft.server.block.entity.DisplayBlockEntity;
+import org.jurassicraft.server.block.entity.ElectricFencePoleBlockEntity;
+import org.jurassicraft.server.block.entity.FeederBlockEntity;
+import org.jurassicraft.server.block.entity.IncubatorBlockEntity;
 import org.jurassicraft.server.block.plant.AncientCoralBlock;
 import org.jurassicraft.server.block.tree.AncientLeavesBlock;
 import org.jurassicraft.server.block.tree.TreeType;
 import org.jurassicraft.server.conf.JurassiCraftConfig;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.EntityHandler;
 import org.jurassicraft.server.entity.GoatEntity;
 import org.jurassicraft.server.entity.TranquilizerDartEntity;
@@ -40,36 +84,21 @@ import org.jurassicraft.server.entity.item.PaddockSignEntity;
 import org.jurassicraft.server.entity.vehicle.FordExplorerEntity;
 import org.jurassicraft.server.entity.vehicle.HelicopterEntity;
 import org.jurassicraft.server.entity.vehicle.JeepWranglerEntity;
-import org.jurassicraft.server.item.*;
+import org.jurassicraft.server.item.Dart;
+import org.jurassicraft.server.item.DinosaurSpawnEggItem;
+import org.jurassicraft.server.item.FossilItem;
+import org.jurassicraft.server.item.ItemHandler;
+import org.jurassicraft.server.item.JournalItem;
 import org.jurassicraft.server.plant.Plant;
 import org.jurassicraft.server.plant.PlantHandler;
 
-import com.google.common.collect.Maps;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import net.ilexiconn.llibrary.client.model.tabula.TabulaModelHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.world.ColorizerFoliage;
-import net.minecraft.world.biome.BiomeColorHelper;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import static org.jurassicraft.server.item.ItemHandler.*;
 import static org.jurassicraft.server.block.BlockHandler.*;
+import static org.jurassicraft.server.item.ItemHandler.*;
 
 @SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(modid=JurassiCraft.MODID, value = Side.CLIENT)
@@ -347,7 +376,7 @@ public enum RenderingHandler {
         for (Dinosaur dinosaur : EntityHandler.getDinosaurs().values()) {
             int meta = EntityHandler.getDinosaurId(dinosaur);
 
-            String formattedName = dinosaur.getName().toLowerCase(Locale.ENGLISH).replaceAll(" ", "_");
+            String formattedName = dinosaur.getIdentifier().getResourcePath();
 
             for (Map.Entry<String, FossilItem> entry : ItemHandler.FOSSILS.entrySet()) {
                 List<Dinosaur> dinosaursForType = FossilItem.fossilDinosaurs.get(entry.getKey());
@@ -370,7 +399,7 @@ public enum RenderingHandler {
             registerItemRenderer(SYRINGE, meta, "syringe/syringe_" + formattedName);
             //registerItemRenderer(ACTION_FIGURE, meta, "action_figure/action_figure_" + formattedName);
 
-            if (!dinosaur.givesDirectBirth()) {
+            if (!dinosaur.getMetadata().givesDirectBirth()) {
                 registerItemRenderer(EGG, meta, "egg/egg_" + formattedName);
             }
 
@@ -484,14 +513,15 @@ public enum RenderingHandler {
             DinosaurSpawnEggItem item = (DinosaurSpawnEggItem) stack.getItem();
             Dinosaur dino = item.getDinosaur(stack);
             if (dino != null) {
+                DinosaurMetadata metadata = dino.getMetadata();
                 int mode = item.getMode(stack);
                 if (mode == 0) {
                     mode = JurassiCraft.timerTicks % 64 > 32 ? 1 : 2;
                 }
                 if (mode == 1) {
-                    return tintIndex == 0 ? dino.getEggPrimaryColorMale() : dino.getEggSecondaryColorMale();
+                    return tintIndex == 0 ? metadata.getEggPrimaryColorMale() : metadata.getEggSecondaryColorMale();
                 } else {
-                    return tintIndex == 0 ? dino.getEggPrimaryColorFemale() : dino.getEggSecondaryColorFemale();
+                    return tintIndex == 0 ? metadata.getEggPrimaryColorFemale() : metadata.getEggSecondaryColorFemale();
                 }
             }
             return 0xFFFFFF;
@@ -539,12 +569,13 @@ public enum RenderingHandler {
         registerRenderInfo(new DinosaurRenderInfo(dinosaur, animator, shadowSize));
     }
 
-    private static void registerRenderInfo(DinosaurRenderInfo renderDef) {
-        renderInfos.put(renderDef.getDinosaur(), renderDef);
-        RenderingRegistry.registerEntityRenderingHandler(renderDef.getDinosaur().getDinosaurClass(), renderDef);
+    private static void registerRenderInfo(DinosaurRenderInfo renderInfo) {
+        renderInfos.put(renderInfo.getDinosaur(), renderInfo);
+        DinosaurMetadata metadata = renderInfo.getDinosaur().getMetadata();
+        RenderingRegistry.registerEntityRenderingHandler(metadata.getDinosaurClass(), renderInfo);
     }
 
     public DinosaurRenderInfo getRenderInfo(Dinosaur dino) {
-        return this.renderInfos.get(dino);
+        return renderInfos.get(dino);
     }
 }

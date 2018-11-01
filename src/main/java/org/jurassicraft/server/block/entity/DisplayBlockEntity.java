@@ -29,7 +29,7 @@ public class DisplayBlockEntity extends TileEntity {
         this.isSkeleton = isSkeleton;
         try {
             Dinosaur dinosaur = EntityHandler.getDinosaurById(dinosaurId);
-            this.entity = dinosaur.getDinosaurClass().getDeclaredConstructor(World.class).newInstance(this.world);
+            this.entity = dinosaur.construct(this.world);
             this.initializeEntity(this.entity);
         } catch (Exception e) {
         }
@@ -165,7 +165,7 @@ public class DisplayBlockEntity extends TileEntity {
         public DinosaurEntity create(World world) {
             try {
                 Dinosaur dinosaur = EntityHandler.getDinosaurById(this.dinosaurId);
-                return dinosaur.getDinosaurClass().getDeclaredConstructor(World.class).newInstance(world);
+                return dinosaur.construct(world);
             } catch (Exception e) {
                 return null;
             }

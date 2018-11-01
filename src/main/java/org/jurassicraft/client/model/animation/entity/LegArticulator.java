@@ -1,12 +1,11 @@
 package org.jurassicraft.client.model.animation.entity;
 
-import org.jurassicraft.server.dinosaur.Dinosaur;
+import net.ilexiconn.llibrary.client.model.tools.AdvancedModelRenderer;
+import net.minecraft.util.math.MathHelper;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.entity.DinosaurEntity;
 import org.jurassicraft.server.entity.LegSolverBiped;
 import org.jurassicraft.server.entity.LegSolverQuadruped;
-
-import net.ilexiconn.llibrary.client.model.tools.AdvancedModelRenderer;
-import net.minecraft.util.math.MathHelper;
 
 public final class LegArticulator {
     private LegArticulator() {}
@@ -70,7 +69,7 @@ public final class LegArticulator {
 
     private static float getScale(DinosaurEntity entity) {
         float scaleModifier = entity.getAttributes().getScaleModifier();
-        Dinosaur dino = entity.getDinosaur();
-        return (float) entity.interpolate(dino.getScaleInfant(), dino.getScaleAdult()) * scaleModifier;
+        DinosaurMetadata meta = entity.getMetadata();
+        return (float) entity.interpolate(meta.getScaleInfant(), meta.getScaleAdult()) * scaleModifier;
     }
 }

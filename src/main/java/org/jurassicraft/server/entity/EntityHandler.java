@@ -1,12 +1,12 @@
 package org.jurassicraft.server.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.fml.common.ProgressManager;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.server.api.Hybrid;
 import org.jurassicraft.server.conf.JurassiCraftConfig;
@@ -14,6 +14,7 @@ import org.jurassicraft.server.dinosaur.BrachiosaurusDinosaur;
 import org.jurassicraft.server.dinosaur.CoelacanthDinosaur;
 import org.jurassicraft.server.dinosaur.DilophosaurusDinosaur;
 import org.jurassicraft.server.dinosaur.Dinosaur;
+import org.jurassicraft.server.dinosaur.DinosaurMetadata;
 import org.jurassicraft.server.dinosaur.GallimimusDinosaur;
 import org.jurassicraft.server.dinosaur.MicroraptorDinosaur;
 import org.jurassicraft.server.dinosaur.MussaurusDinosaur;
@@ -30,13 +31,12 @@ import org.jurassicraft.server.entity.vehicle.HelicopterEntity;
 import org.jurassicraft.server.entity.vehicle.JeepWranglerEntity;
 import org.jurassicraft.server.period.TimePeriod;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class EntityHandler {
     public static final Dinosaur BRACHIOSAURUS = new BrachiosaurusDinosaur();
@@ -64,7 +64,7 @@ public class EntityHandler {
     public static List<Dinosaur> getMarineCreatures() {
         List<Dinosaur> marineDinosaurs = new ArrayList<>();
         for (Dinosaur dino : getRegisteredDinosaurs()) {
-            if (dino.isMarineCreature() && !(dino instanceof Hybrid)) {
+            if (dino.getMetadata().isMarineCreature() && !(dino instanceof Hybrid)) {
                 marineDinosaurs.add(dino);
             }
         }
@@ -102,14 +102,14 @@ public class EntityHandler {
         registerEntity(GoatEntity.class, "Goat", 0xEFEDE7, 0x7B3E20);
 
         registerEntity(TranquilizerDartEntity.class, "Tranquilizer Dart");
-        
+
         ArrayList<Biome> biomeHills = new ArrayList<Biome>();
-        	biomeHills.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.HILLS));
+        biomeHills.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.HILLS));
         ArrayList<Biome> biomePlains = new ArrayList<Biome>();
-        	biomePlains.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
+        biomePlains.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.PLAINS));
         ArrayList<Biome> biomeForest = new ArrayList<Biome>();
-        	biomeForest.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.FOREST));
-        
+        biomeForest.addAll(BiomeDictionary.getBiomes(BiomeDictionary.Type.FOREST));
+
 //        EntityRegistry.addSpawn(GoatEntity.class, 10, 1, 3, EnumCreatureType.CREATURE, biomeHills.toArray(new Biome[biomeHills.size()]));
 //        EntityRegistry.addSpawn(GoatEntity.class, 15, 1, 3, EnumCreatureType.CREATURE, biomeHills.toArray(new Biome[biomePlains.size()]));
 //        EntityRegistry.addSpawn(GoatEntity.class, 15, 1, 3, EnumCreatureType.CREATURE, biomeHills.toArray(new Biome[biomeForest.size()]));
@@ -122,47 +122,43 @@ public class EntityHandler {
         for (Map.Entry<Integer, Dinosaur> entry : DINOSAURS.entrySet()) {
             Dinosaur dinosaur = entry.getValue();
 
-            dinosaurProgress.step(dinosaur.getName());
+            dinosaurProgress.step(dinosaur.getLocalizedName());
 
             dinosaur.init();
 
             boolean canSpawn = !(dinosaur instanceof Hybrid) && dinosaur.shouldRegister();
 
             if (canSpawn) {
-                TimePeriod period = dinosaur.getPeriod();
-                List<Dinosaur> periods = DINOSAUR_PERIODS.get(period);
-                if (periods == null) {
-                    periods = new LinkedList<>();
-                    DINOSAUR_PERIODS.put(period, periods);
-                }
+                TimePeriod period = dinosaur.getMetadata().getPeriod();
+                List<Dinosaur> periods = DINOSAUR_PERIODS.computeIfAbsent(period, k -> new LinkedList<>());
                 periods.add(dinosaur);
             }
 
-            Class<? extends DinosaurEntity> clazz = dinosaur.getDinosaurClass();
-
-            registerEntity(clazz, dinosaur.getName());
+            Class<? extends DinosaurEntity> clazz = dinosaur.getMetadata().getDinosaurClass();
+            registerDinosaurEntity(clazz, dinosaur.getIdentifier());
 
             addSpawn(canSpawn, clazz, dinosaur);
         }
     }
-    
+
     private static void addSpawn(boolean canSpawn, Class clazz, Dinosaur dinosaur) {
-    	if (canSpawn && JurassiCraftConfig.ENTITIES.naturalSpawning_D) {
-            EntityRegistry.addSpawn(clazz, dinosaur.getSpawnChance(), 1, Math.min(6, dinosaur.getMaxHerdSize() / 2), dinosaur.isMarineCreature() ? EnumCreatureType.WATER_CREATURE : EnumCreatureType.CREATURE, dinosaur.getSpawnBiomes());
+        if (canSpawn && JurassiCraftConfig.ENTITIES.naturalSpawning_D) {
+            DinosaurMetadata metadata = dinosaur.getMetadata();
+            EntityRegistry.addSpawn(clazz, metadata.getSpawnChance(), 1, Math.min(6, metadata.getMaxHerdSize() / 2), metadata.isMarineCreature() ? EnumCreatureType.WATER_CREATURE : EnumCreatureType.CREATURE, metadata.getSpawnBiomes());
         }
     }
-    
+
     public static void reinitSpawns() {
         for (Map.Entry<Integer, Dinosaur> entry : DINOSAURS.entrySet()) {
             Dinosaur dinosaur = entry.getValue();
-            Class<? extends DinosaurEntity> clazz = dinosaur.getDinosaurClass();
-            EntityRegistry.removeSpawn(clazz, dinosaur.isMarineCreature() ? EnumCreatureType.WATER_CREATURE : EnumCreatureType.CREATURE, dinosaur.getSpawnBiomes());
+            DinosaurMetadata metadata = dinosaur.getMetadata();
+            Class<? extends DinosaurEntity> clazz = metadata.getDinosaurClass();
+            EntityRegistry.removeSpawn(clazz, metadata.isMarineCreature() ? EnumCreatureType.WATER_CREATURE : EnumCreatureType.CREATURE, metadata.getSpawnBiomes());
             boolean canSpawn = !(dinosaur instanceof Hybrid) && dinosaur.shouldRegister();
             addSpawn(canSpawn, clazz, dinosaur);
-            
         }
     }
-    
+
     private static void registerEntity(Class<? extends Entity> entity, String name) {
         String formattedName = name.toLowerCase(Locale.ENGLISH).replaceAll(" ", "_");
         ResourceLocation registryName = new ResourceLocation("jurassicraft:entities." + formattedName);
@@ -173,6 +169,11 @@ public class EntityHandler {
         String formattedName = name.toLowerCase(Locale.ENGLISH).replaceAll(" ", "_");
         ResourceLocation registryName = new ResourceLocation("jurassicraft:entities." + formattedName);
         EntityRegistry.registerModEntity(registryName, entity, "jurassicraft." + formattedName, entityId++, JurassiCraft.INSTANCE, 1024, 1, true, primary, secondary);
+    }
+
+    private static void registerDinosaurEntity(Class<? extends Entity> entity, ResourceLocation identifier) {
+        String name = identifier.getResourceDomain() + "." + identifier.getResourceDomain();
+        EntityRegistry.registerModEntity(identifier, entity, name, entityId++, JurassiCraft.INSTANCE, 1024, 1, true);
     }
 
     public static void registerDinosaur(int id, Dinosaur dinosaur) {
@@ -196,7 +197,7 @@ public class EntityHandler {
     public static List<Dinosaur> getDinosaursFromAmber() {
         List<Dinosaur> dinosaurs = new LinkedList<>();
         for (Dinosaur dinosaur : getRegisteredDinosaurs()) {
-            if (!dinosaur.isMarineCreature() && !(dinosaur instanceof Hybrid)) {
+            if (!dinosaur.getMetadata().isMarineCreature() && !(dinosaur instanceof Hybrid)) {
                 dinosaurs.add(dinosaur);
             }
         }
@@ -240,7 +241,7 @@ public class EntityHandler {
         for (Map.Entry<Integer, Dinosaur> entry : EntityHandler.DINOSAURS.entrySet()) {
             Dinosaur dinosaur = entry.getValue();
 
-            if (dinosaur.getDinosaurClass().equals(clazz)) {
+            if (dinosaur.getMetadata().getDinosaurClass().equals(clazz)) {
                 return dinosaur;
             }
         }
