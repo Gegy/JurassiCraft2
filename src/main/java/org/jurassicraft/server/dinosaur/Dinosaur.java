@@ -1,15 +1,10 @@
 package org.jurassicraft.server.dinosaur;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.vecmathimpl.Matrix4d;
-import javax.vecmathimpl.Vector3d;
-
+import net.ilexiconn.llibrary.client.model.tabula.container.TabulaCubeContainer;
+import net.ilexiconn.llibrary.client.model.tabula.container.TabulaModelContainer;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import org.jurassicraft.JurassiCraft;
 import org.jurassicraft.client.model.animation.PoseHandler;
 import org.jurassicraft.server.api.GrowthStageGenderContainer;
@@ -22,11 +17,14 @@ import org.jurassicraft.server.entity.ai.util.MovementType;
 import org.jurassicraft.server.period.TimePeriod;
 import org.jurassicraft.server.tabula.TabulaModelHelper;
 
-import net.ilexiconn.llibrary.client.model.tabula.container.TabulaCubeContainer;
-import net.ilexiconn.llibrary.client.model.tabula.container.TabulaModelContainer;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3d;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public abstract class Dinosaur implements Comparable<Dinosaur> {
     private final Map<GrowthStage, List<ResourceLocation>> overlays = new HashMap<>();
