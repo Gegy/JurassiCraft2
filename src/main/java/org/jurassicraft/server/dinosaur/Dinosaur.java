@@ -14,8 +14,8 @@ import org.jurassicraft.server.entity.GrowthStage;
 import org.jurassicraft.server.tabula.TabulaModelHelper;
 
 import javax.annotation.Nullable;
-import javax.vecmathimpl.Matrix4d;
-import javax.vecmathimpl.Vector3d;
+import javax.vecmath.Matrix4d;
+import javax.vecmath.Vector3d;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
