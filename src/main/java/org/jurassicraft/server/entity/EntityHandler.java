@@ -122,7 +122,7 @@ public class EntityHandler {
         for (Map.Entry<Integer, Dinosaur> entry : DINOSAURS.entrySet()) {
             Dinosaur dinosaur = entry.getValue();
 
-            dinosaurProgress.step(dinosaur.getLocalizedName());
+            dinosaurProgress.step(dinosaur.getIdentifier().toString());
 
             dinosaur.init();
 
@@ -172,7 +172,7 @@ public class EntityHandler {
     }
 
     private static void registerDinosaurEntity(Class<? extends Entity> entity, ResourceLocation identifier) {
-        String name = identifier.getResourceDomain() + "." + identifier.getResourceDomain();
+        String name = identifier.getResourceDomain() + "." + identifier.getResourcePath();
         EntityRegistry.registerModEntity(identifier, entity, name, entityId++, JurassiCraft.INSTANCE, 1024, 1, true);
     }
 
